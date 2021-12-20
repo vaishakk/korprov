@@ -34,7 +34,7 @@ def get_time(driver, pn, locs):
 	select = Select(fields[5])
 	select.select_by_value('4')
 	for loc in locs:
-		driver.implicitly_wait(10)
+		#driver.implicitly_wait(10)
 		# Select location
 		fields[2].clear()
 		fields[2].send_keys(loc)
@@ -65,7 +65,7 @@ service = Service('/Users/vk/dev/korprov/chromedriver')
 driver = webdriver.Chrome(service=service)#, options=chrome_options)
 driver.get("https://fp.trafikverket.se/Boka/#/")
 driver.implicitly_wait(10)
-pn = '19850212-5712'
+pn = '19890609-1684'
 #locs = ['Alingsås', 'Arjeplog', 'Arvidsjaur']
 locs = []
 with open('korprov-locs.txt','r') as file:
