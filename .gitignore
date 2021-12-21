@@ -116,3 +116,4 @@ dmypy.json
 # Others
 *.csv
 *.config
+korprov-times.csv

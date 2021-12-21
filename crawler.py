@@ -85,11 +85,9 @@ class crawler(webdriver.Chrome):
 		select = Select(fields[5])
 		select.select_by_value('4')
 		for loc in self.locs:
-			#self.implicitly_wait(10)
 			# Select location
 			fields[2].clear()
 			fields[2].send_keys(loc)
-			
 			#fields[2].click()
 			dd = self.find_elements(By.TAG_NAME, 'li')
 			clicked  = False
