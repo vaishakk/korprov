@@ -15,9 +15,11 @@ class crawler(webdriver.Chrome):
 		self.implicitly_wait(10)
 		self.pn = pn
 		self.locs = []
+		self.locs = ['Alingsås', 'Arjeplog']#, 'Arvidsjaur', 'Arvika']
+		'''
 		with open('korprov-locs.txt','r') as file:
 			for loc in file.readlines():
-				self.locs.append(loc.strip())
+				self.locs.append(loc.strip())'''
 		
 
 	def navigate_no_login(self):
@@ -99,13 +101,17 @@ class crawler(webdriver.Chrome):
 				else:
 					clicked = True
 			# Wait for results to load
-			try:
-				WebDriverWait(self, timeout=0.1).until(lambda d: len(d.find_elements(By.TAG_NAME, 'strong')) > 0)
-			except:
-				yield loc, '' # Return null if no result'''
+			WebDriverWait(self, timeout=0.01).until(crawler.__page_load)
+			if len(self.find_elements(By.TAG_NAME, 'strong')) > 0:
+				yield loc, self.find_elements(By.TAG_NAME, 'strong')[0].text
 			else:
-				times = self.find_elements(By.TAG_NAME, 'strong')
-				yield loc, times[0].text
+				yield loc, ''
+			
+	@staticmethod
+	def __page_load(d):
+		if (len(d.find_elements(By.TAG_NAME, 'strong')) > 0) or (d.find_element(By.XPATH, "//*[contains(text(),'Hittar inga lediga tider som matchar dina val.')]").is_displayed()):
+			return True
+		return []
 
 	
 
