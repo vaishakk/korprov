@@ -15,11 +15,10 @@ class crawler(webdriver.Chrome):
 		self.implicitly_wait(10)
 		self.pn = pn
 		self.locs = []
-		self.locs = ['Alingsås', 'Arjeplog']#, 'Arvidsjaur', 'Arvika']
-		'''
+		#self.locs = ['Alingsås', 'Arjeplog']#, 'Arvidsjaur', 'Arvika']
 		with open('korprov-locs.txt','r') as file:
 			for loc in file.readlines():
-				self.locs.append(loc.strip())'''
+				self.locs.append(loc.strip())
 		
 
 	def navigate_no_login(self):
