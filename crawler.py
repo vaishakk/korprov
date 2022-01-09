@@ -5,6 +5,7 @@ from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support.ui import Select
 import configparser
+import os
 
 
 class crawler(webdriver.Chrome):
@@ -16,6 +17,7 @@ class crawler(webdriver.Chrome):
 		self.pn = pn
 		self.locs = []
 		#self.locs = ['Alingsås', 'Arjeplog']#, 'Arvidsjaur', 'Arvika']
+		
 		with open('korprov-locs.txt','r') as file:
 			for loc in file.readlines():
 				self.locs.append(loc.strip())
@@ -41,7 +43,12 @@ class crawler(webdriver.Chrome):
 		opts = self.find_elements(By.CLASS_NAME,'list-group-item')
 		opts[3].click()
 		# Wait for page to load
-		WebDriverWait(self, timeout=3).until(lambda d: len(d.find_elements(By.CLASS_NAME, 'form-control')) == 7)
+		# WebDriverWait(self, timeout=3).until(lambda d: len(d.find_elements(By.CLASS_NAME, 'form-control')) == 7)
+		with open('korprov-times.csv','w') as file:
+			for l, t in self.iter_locs():
+				file.write('{}, {}\n'.format(l, t))
+				print(l + '>' + t)
+		self.close()
 
 	def navigate_with_login(self):
 		# Click 'Mina prov' button
@@ -112,7 +119,6 @@ class crawler(webdriver.Chrome):
 			return True
 		return []
 
-	
 
 
 def get_time(driver, pn, locs):
@@ -174,7 +180,7 @@ config.read('config.config')
 pn = config['USER']['pn']
 print(pn)
 c = crawler(pn=pn)
-c.navigate_with_login()
+c.navigate_no_login()
 '''
 chrome_options = Options()
 chrome_options.add_argument("--headless")
