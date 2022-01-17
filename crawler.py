@@ -46,6 +46,13 @@ class crawler(webdriver.Chrome):
 		# WebDriverWait(self, timeout=3).until(lambda d: len(d.find_elements(By.CLASS_NAME, 'form-control')) == 7)
 		with open('korprov-times.csv','w') as file:
 			for l, t in self.iter_locs():
+				if t.find('2022-01') != -1:
+					os.system("say January "+ l)
+				elif t.find('2022-02') != -1:
+					os.system("say February "+ l)
+				elif t.find('2022-03-0') != -1:
+					os.system("say March "+ l)
+
 				file.write('{}, {}\n'.format(l, t))
 				print(l + '>' + t)
 		self.close()
@@ -84,7 +91,7 @@ class crawler(webdriver.Chrome):
 
 	def iter_locs(self):
 		# Wait for page to load
-		WebDriverWait(self, timeout=3).until(lambda d: len(d.find_elements(By.CLASS_NAME, 'form-control')) == 7)
+		WebDriverWait(self, timeout=10).until(lambda d: len(d.find_elements(By.CLASS_NAME, 'form-control')) == 7)
 		# Select test type
 		fields = self.find_elements(By.CLASS_NAME, 'form-control')
 		select = Select(fields[1])
@@ -112,12 +119,13 @@ class crawler(webdriver.Chrome):
 				yield loc, self.find_elements(By.TAG_NAME, 'strong')[0].text
 			else:
 				yield loc, ''
-			
+
 	@staticmethod
 	def __page_load(d):
 		if (len(d.find_elements(By.TAG_NAME, 'strong')) > 0) or (d.find_element(By.XPATH, "//*[contains(text(),'Hittar inga lediga tider som matchar dina val.')]").is_displayed()):
 			return True
 		return []
+
 
 
 
