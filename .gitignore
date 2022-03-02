@@ -113,8 +113,13 @@ dmypy.json
 # Pyre type checker
 .pyre/
 
+#IDEA stuff
+.idea
+
 # Others
 *.csv
 *.config
 korprov-times.csv
 *.csv
+.DS_Store
+
