@@ -9,7 +9,7 @@ import os
 
 
 class Crawler(webdriver.Chrome):
-	def __init__(self, pn):
+	def __init__(self, pn, locs):
 		service = Service('./chromedriver')
 		super().__init__(service=service)
 		self.get("https://fp.trafikverket.se/Boka/#/")
@@ -17,10 +17,13 @@ class Crawler(webdriver.Chrome):
 		self.pn = pn
 		self.locs = []
 		#self.locs = ['Alingsås', 'Arjeplog']#, 'Arvidsjaur', 'Arvika']
-		
-		with open('korprov-locs.txt','r') as file:
-			for loc in file.readlines():
-				self.locs.append(loc.strip())
+
+		if len(locs):
+			self.locs = locs
+		else:
+			with open('korprov-locs.txt','r') as file:
+				for loc in file.readlines():
+					self.locs.append(loc.strip())
 		
 
 	def navigate_no_login(self):
@@ -114,7 +117,7 @@ class Crawler(webdriver.Chrome):
 				else:
 					clicked = True
 			# Wait for results to load
-			WebDriverWait(self, timeout=0.01).until(crawler.__page_load)
+			WebDriverWait(self, timeout=0.01).until(Crawler.__page_load)
 			if len(self.find_elements(By.TAG_NAME, 'strong')) > 0:
 				yield loc, self.find_elements(By.TAG_NAME, 'strong')[0].text
 			else:
@@ -131,6 +134,12 @@ class Crawler(webdriver.Chrome):
 config = configparser.ConfigParser()
 config.read('config.config')
 pn = config['USER']['pn']
+locs = []
+try:
+	locs = config['LOCATIONS']['locs'].split('\n')
+except:
+	locs = []
+
 print(pn)
-c = Crawler(pn=pn)
+c = Crawler(pn=pn, locs=locs)
 c.navigate_no_login()
