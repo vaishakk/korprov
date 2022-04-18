@@ -6,6 +6,7 @@ from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support.ui import Select
 import configparser
 import os
+import sys
 
 
 class Crawler(webdriver.Chrome):
@@ -133,7 +134,11 @@ class Crawler(webdriver.Chrome):
 
 config = configparser.ConfigParser()
 config.read('config.config')
-pn = config['USER']['pn']
+pn = ''
+if len(sys.argv) > 1:
+	pn = sys.argv[1]
+else:
+	pn = config['USER']['pn']
 locs = []
 try:
 	locs = config['LOCATIONS']['locs'].split('\n')
