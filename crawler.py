@@ -17,8 +17,6 @@ class Crawler(webdriver.Chrome):
 		self.implicitly_wait(10)
 		self.pn = pn
 		self.locs = []
-		#self.locs = ['Alingsås', 'Arjeplog']#, 'Arvidsjaur', 'Arvika']
-
 		if len(locs):
 			self.locs = locs
 		else:
@@ -49,14 +47,7 @@ class Crawler(webdriver.Chrome):
 		# Wait for page to load
 		# WebDriverWait(self, timeout=3).until(lambda d: len(d.find_elements(By.CLASS_NAME, 'form-control')) == 7)
 		with open('korprov-times.csv','w') as file:
-			for l, t in self.iter_locs():
-				if t.find('2022-01') != -1:
-					os.system("say January "+ l)
-				elif t.find('2022-02') != -1:
-					os.system("say February "+ l)
-				elif t.find('2022-03-0') != -1:
-					os.system("say March "+ l)
-
+			for l, t in self.iter_locs_kunskapsprov():
 				file.write('{}, {}\n'.format(l, t))
 				print(l + '>' + t)
 		self.close()
@@ -93,7 +84,40 @@ class Crawler(webdriver.Chrome):
 				print(l + '>' + t)
 		self.close()
 
-	def iter_locs(self):
+	def iter_locs_kunskapsprov(self):
+		# Wait for page to load
+		WebDriverWait(self, timeout=10).until(lambda d: len(d.find_elements(By.CLASS_NAME, 'form-control')) == 7)
+		# Select test type
+		fields = self.find_elements(By.CLASS_NAME, 'form-control')
+		select = Select(fields[1])
+		select.select_by_value('3')
+		# Select language
+		select = Select(fields[4])
+		#print(select.text)
+		select.select_by_value('4')
+		for loc in self.locs:
+			# Select location
+			fields[2].clear()
+			fields[2].send_keys(loc)
+			#fields[2].click()
+			dd = self.find_elements(By.TAG_NAME, 'li')
+			clicked  = False
+			while not clicked:
+				try:
+					dd[6].click()
+				except:
+					fields[2].click()
+				else:
+					clicked = True
+			# Wait for results to load
+			WebDriverWait(self, timeout=0.01).until(Crawler.__page_load)
+			if len(self.find_elements(By.TAG_NAME, 'strong')) > 0:
+				yield loc, self.find_elements(By.TAG_NAME, 'strong')[0].text
+			else:
+				yield loc, ''
+
+
+	def iter_locs_korprov(self):
 		# Wait for page to load
 		WebDriverWait(self, timeout=10).until(lambda d: len(d.find_elements(By.CLASS_NAME, 'form-control')) == 7)
 		# Select test type
