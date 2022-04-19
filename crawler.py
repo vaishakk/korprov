@@ -10,7 +10,7 @@ import sys
 
 
 class Crawler(webdriver.Chrome):
-	def __init__(self, pn, locs):
+	def __init__(self, pn, locs, test_type, bil_type):
 		service = Service('./chromedriver')
 		super().__init__(service=service)
 		self.get("https://fp.trafikverket.se/Boka/#/")
@@ -20,10 +20,18 @@ class Crawler(webdriver.Chrome):
 		if len(locs):
 			self.locs = locs
 		else:
-			with open('korprov-locs.txt','r') as file:
-				for loc in file.readlines():
-					self.locs.append(loc.strip())
-		
+			if test_type == 'Korprov':
+				with open('korprov-locs.txt','r') as file:
+					for loc in file.readlines():
+						self.locs.append(loc.strip())
+			else:
+				with open('kunskaps-locs.txt','r') as file:
+					for loc in file.readlines():
+						self.locs.append(loc.strip())
+		if test_type == 'Korprov':
+			self.iterator = self.iter_locs_korprov
+		else:
+			self.iterator = self.iter_locs_kunskapsprov
 
 	def navigate_no_login(self):
 		# Click 'Boka' button
@@ -47,7 +55,7 @@ class Crawler(webdriver.Chrome):
 		# Wait for page to load
 		# WebDriverWait(self, timeout=3).until(lambda d: len(d.find_elements(By.CLASS_NAME, 'form-control')) == 7)
 		with open('korprov-times.csv','w') as file:
-			for l, t in self.iter_locs_kunskapsprov():
+			for l, t in self.iterator():
 				file.write('{}, {}\n'.format(l, t))
 				print(l + '>' + t)
 		self.close()
@@ -79,7 +87,7 @@ class Crawler(webdriver.Chrome):
 		panel = self.find_elements(By.CLASS_NAME, 'panel.panel-success')[0]
 		panel.find_elements(By.XPATH,"//*[contains(text(), 'Omboka')]")[0].click()
 		with open('korprov-times.csv','w') as file:
-			for l, t in self.iter_locs():
+			for l, t in self.iter_locs_kunskapsprov():
 				file.write('{}, {}\n'.format(l, t))
 				print(l + '>' + t)
 		self.close()
@@ -115,7 +123,6 @@ class Crawler(webdriver.Chrome):
 				yield loc, self.find_elements(By.TAG_NAME, 'strong')[0].text
 			else:
 				yield loc, ''
-
 
 	def iter_locs_korprov(self):
 		# Wait for page to load
@@ -163,12 +170,28 @@ if len(sys.argv) > 1:
 	pn = sys.argv[1]
 else:
 	pn = config['USER']['pn']
-locs = []
+
 try:
-	locs = config['LOCATIONS']['locs'].split('\n')
+	test_type = config['TEST']['type']
+except:
+	test_type = 'Korprov'
+
+locs = []
+if test_type == 'Korprov':
+	loc_str = 'korprov_locs'
+else:
+	loc_str = 'kunskap_locs'
+try:
+	locs = config['LOCATIONS'][loc_str].split('\n')
 except:
 	locs = []
 
+try:
+	bil_type = config['TEST']['car']
+except:
+	bil_type = 'Automatbil'
+
+
 print(pn)
-c = Crawler(pn=pn, locs=locs)
+c = Crawler(pn=pn, locs=locs, test_type=test_type, bil_type=bil_type)
 c.navigate_no_login()
