@@ -13,3 +13,13 @@ python run.py [-h] [--pn PN] [--test TEST] [--car CAR] [--loc LOC]
   --loc LOC, -l LOC     Location of test. Will be ignored if not a valid location. 
   --add_config 
   ```
+### Runing with default values
+```
+python run.py -p <personnummer>
+```
+## Configuration
+A permenant configuration can be added by calling the --add_config command
+```
+python run.py --add_config -p <personnummer> -t Kunskapsprov -l Farsta
+```
+Command line arguments overrides stored configuration.
