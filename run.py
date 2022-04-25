@@ -15,7 +15,7 @@ args = parser.parse_args()
 
 test_config = TestConfig()
 if args.add_config:
-	pass
+	test_config.save_config(args)
 else:
 	config = configparser.ConfigParser()
 	config.read('config.config')

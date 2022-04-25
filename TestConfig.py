@@ -40,13 +40,39 @@ class TestConfig():
 		else:
 			if self.test_type == 'Korprov':
 				try:
-					self.loc = config['LOCATIONS']['korprov_locs']
+					self.loc = config['LOCATIONS']['korprov_locs'].split('\n')
 				except:
 					print('Using default value for location: %'.format(self.loc))
 			else:
 				try:
-					self.loc = config['LOCATIONS']['kunskap_locs']
+					self.loc = config['LOCATIONS']['kunskap_locs'].split('\n')
 				except:
 					print('Using default value for location: %'.format(self.loc))
 
 		return True
+
+	def save_config(self, args):
+		config = configparser.ConfigParser()
+		config.read('config.config')
+		if args.pn:
+			config['USER']['pn'] = args.pn
+		if args.test:
+			config['TEST']['type'] = args.test
+		if args.car:
+			config['TEST']['car'] = args.car
+		if args.loc:
+			if config['TEST']['type'] == 'Korprov':
+				locs  = config['LOCATIONS']['korprov_locs'].split('\n')
+				if args.loc not in locs:
+					config['LOCATIONS']['korprov_locs'] = config['LOCATIONS']['korprov_locs'] + '\n' + args.loc
+			else:
+				locs = config['LOCATIONS']['kunskap_locs'].split('\n')
+				if args.loc not in locs:
+					config['LOCATIONS']['kunskap_locs'] = config['LOCATIONS']['kunskap_locs'] + '\n' + args.loc
+
+		with open('config.config', 'w') as file:
+			config.write(file)
+
+
+
+
