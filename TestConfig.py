@@ -6,7 +6,7 @@ class TestConfig():
 		self.pn = ''
 		self.test_type = 'Korprov'
 		self.car_type = 'Automatbil'
-		self.test_lang = 'English'
+		self.language = 'Engelska'
 		self.loc = []
 
 	def extract_args(self, args, config_file):
@@ -43,7 +43,7 @@ class TestConfig():
 				except:
 					print('Using default value for car type: {}'.format(self.car_type))
 
-		if self.test_type == 'Kunskap':
+		if self.test_type == 'Kunskapsprov':
 			if args.lang:
 				self.language = args.lang
 			else:
@@ -92,7 +92,3 @@ class TestConfig():
 
 		with open('config.config', 'w') as file:
 			config.write(file)
-
-
-
-

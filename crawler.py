@@ -9,6 +9,30 @@ from TestConfig import TestConfig
 import os
 import sys
 
+CAR_TYPE = {
+	'Automatbil': '4',
+	'Manuellbil': '2'
+}
+
+LANGUAGE = {
+	'Tyska': "12",
+	'Turkiska': "11",
+	'Thailändska': "133",
+	'Spanska': "10",
+	'Sorani': "9",
+	'Somaliska': "128",
+	'Ryska': "8",
+	'Persiska': "7",
+	'Franska': "6",
+	'Finska': "5",
+	'Engelska': "4",
+	'BKS': "3",
+	'Arabiska': "2",
+	'Albanska': "1",
+	'Svenska': "13",
+}
+
+
 class Crawler(webdriver.Chrome):
 	def __init__(self, test_config):
 		service = Service('./chromedriver')
@@ -98,7 +122,7 @@ class Crawler(webdriver.Chrome):
 		# Select language
 		select = Select(fields[4])
 		#print(select.text)
-		select.select_by_value('4')
+		select.select_by_value(LANGUAGE[self.config.language])
 		for loc in self.config.loc:
 			# Select location
 			fields[2].clear()
@@ -129,7 +153,7 @@ class Crawler(webdriver.Chrome):
 		select.select_by_value('12')
 		# Select car type
 		select = Select(fields[5])
-		select.select_by_value('4')
+		select.select_by_value(CAR_TYPE[self.config.bil_type])
 		for loc in self.config.loc:
 			# Select location
 			fields[2].clear()

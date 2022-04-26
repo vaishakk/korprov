@@ -3,7 +3,7 @@ import configparser
 import argparse
 from TestConfig import TestConfig
 
-CONFIG_FILE = 'test.config'
+CONFIG_FILE = 'config.config'
 # Command line arguments
 parser = argparse.ArgumentParser(description='Crawler for trafikverket booking site.')
 parser.add_argument('--pn','-p', help='The personnummer of the user.')
