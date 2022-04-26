@@ -13,6 +13,8 @@ python run.py [-h] [--pn PN] [--test TEST] [--car CAR] [--loc LOC]
   --loc LOC, -l LOC     Location of test. Will be ignored if not a valid location. Default: Farsta
   --add_config 
   ```
+  [Valid Korprov locations](https://github.com/vaishakk/korprov/blob/main/korprov-locs.txt) \
+  [Valid Kunskapsprov locations](https://github.com/vaishakk/korprov/blob/main/kunskaps-locs.txt)
 ### Runing with default values
 ```
 python run.py -p <personnummer>
