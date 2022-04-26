@@ -1,37 +1,25 @@
 from crawler import Crawler
 import configparser
-import os
-import sys
+import argparse
+from TestConfig import TestConfig
 
-config = configparser.ConfigParser()
-config.read('config.config')
-pn = ''
-if len(sys.argv) > 1:
-	pn = sys.argv[1]
+CONFIG_FILE = 'config.config'
+# Command line arguments
+parser = argparse.ArgumentParser(description='Crawler for trafikverket booking site.')
+parser.add_argument('--pn','-p', help='The personnummer of the user.')
+parser.add_argument('--test', '-t', help='Test type - Korprov or Kunskapsprov. Default: Korprov')
+parser.add_argument('--car', '-c', help='Car type - Automatbil or Manuellbil. Default: Automatbil. Only valid for Korprov.' )
+parser.add_argument('--loc', '-l', help='Location of test. Will be ignored if not a valid location.')
+parser.add_argument('--lang', '-s', help='Language of test. Default: Engelska. Only valid for Kunskapsprov')
+parser.add_argument('--add_config', action='store_true', required=False)
+args = parser.parse_args()
+
+test_config = TestConfig()
+if args.add_config:
+	test_config.save_config(args)
 else:
-	pn = config['USER']['pn']
-
-try:
-	test_type = config['TEST']['type']
-except:
-	test_type = 'Korprov'
-
-locs = []
-if test_type == 'Korprov':
-	loc_str = 'korprov_locs'
-else:
-	loc_str = 'kunskap_locs'
-try:
-	locs = config['LOCATIONS'][loc_str].split('\n')
-except:
-	locs = []
-
-try:
-	bil_type = config['TEST']['car']
-except:
-	bil_type = 'Automatbil'
-
-
-print(pn)
-c = Crawler(pn=pn, locs=locs, test_type=test_type, bil_type=bil_type)
-c.navigate_no_login()
+	status = test_config.extract_args(args, CONFIG_FILE)
+	if status:
+		print(test_config.pn)
+		c = Crawler(test_config)
+		c.navigate_no_login()

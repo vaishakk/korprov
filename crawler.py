@@ -5,32 +5,53 @@ from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support.ui import Select
 import configparser
+from TestConfig import TestConfig
 import os
 import sys
 
+CAR_TYPE = {
+	'Automatbil': '4',
+	'Manuellbil': '2'
+}
+
+LANGUAGE = {
+	'Tyska': "12",
+	'Turkiska': "11",
+	'Thailändska': "133",
+	'Spanska': "10",
+	'Sorani': "9",
+	'Somaliska': "128",
+	'Ryska': "8",
+	'Persiska': "7",
+	'Franska': "6",
+	'Finska': "5",
+	'Engelska': "4",
+	'BKS': "3",
+	'Arabiska': "2",
+	'Albanska': "1",
+	'Svenska': "13",
+}
+
+
 class Crawler(webdriver.Chrome):
-	def __init__(self, pn, locs, test_type, bil_type):
+	def __init__(self, test_config):
 		service = Service('./chromedriver')
 		super().__init__(service=service)
 		self.get("https://fp.trafikverket.se/Boka/#/")
 		self.implicitly_wait(10)
-		self.pn = pn
-		self.locs = []
-		if len(locs):
-			self.locs = locs
-		else:
-			if test_type == 'Korprov':
+		self.config = test_config
+		if not len(self.config.loc):
+			if self.config.test_type == 'Korprov':
 				with open('korprov-locs.txt','r') as file:
 					for loc in file.readlines():
-						self.locs.append(loc.strip())
+						self.config.loc.append(loc.strip())
 			else:
 				with open('kunskaps-locs.txt','r') as file:
 					for loc in file.readlines():
-						self.locs.append(loc.strip())
-		if test_type == 'Korprov':
-			self.iterator = self.iter_locs_korprov
-		else:
-			self.iterator = self.iter_locs_kunskapsprov
+						self.config.loc.append(loc.strip())
+
+		self.iterator, self.out_file = (self.iter_locs_korprov, 'korprov-times.csv') if self.config.test_type == 'Korprov' \
+								  else (self.iter_locs_kunskapsprov, 'kunskaps-times.csv')
 
 	def navigate_no_login(self):
 		# Click 'Boka' button
@@ -47,13 +68,13 @@ class Crawler(webdriver.Chrome):
 		self.implicitly_wait(10)
 		# Input personnummer
 		ssn = self.find_element(By.ID, 'social-security-number-input')
-		ssn.send_keys(self.pn)
+		ssn.send_keys(self.config.pn)
 		# Select B
 		opts = self.find_elements(By.CLASS_NAME,'list-group-item')
 		opts[3].click()
 		# Wait for page to load
 		# WebDriverWait(self, timeout=3).until(lambda d: len(d.find_elements(By.CLASS_NAME, 'form-control')) == 7)
-		with open('korprov-times.csv','w') as file:
+		with open(self.out_file,'w') as file:
 			for l, t in self.iterator():
 				file.write('{}, {}\n'.format(l, t))
 				print(l + '>' + t)
@@ -86,7 +107,7 @@ class Crawler(webdriver.Chrome):
 		panel = self.find_elements(By.CLASS_NAME, 'panel.panel-success')[0]
 		panel.find_elements(By.XPATH,"//*[contains(text(), 'Omboka')]")[0].click()
 		with open('korprov-times.csv','w') as file:
-			for l, t in self.iter_locs_kunskapsprov():
+			for l, t in self.iterator():
 				file.write('{}, {}\n'.format(l, t))
 				print(l + '>' + t)
 		self.close()
@@ -101,8 +122,8 @@ class Crawler(webdriver.Chrome):
 		# Select language
 		select = Select(fields[4])
 		#print(select.text)
-		select.select_by_value('4')
-		for loc in self.locs:
+		select.select_by_value(LANGUAGE[self.config.language])
+		for loc in self.config.loc:
 			# Select location
 			fields[2].clear()
 			fields[2].send_keys(loc)
@@ -132,8 +153,8 @@ class Crawler(webdriver.Chrome):
 		select.select_by_value('12')
 		# Select car type
 		select = Select(fields[5])
-		select.select_by_value('4')
-		for loc in self.locs:
+		select.select_by_value(CAR_TYPE[self.config.bil_type])
+		for loc in self.config.loc:
 			# Select location
 			fields[2].clear()
 			fields[2].send_keys(loc)
