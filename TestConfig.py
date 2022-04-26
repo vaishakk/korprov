@@ -1,5 +1,5 @@
-from crawler import Crawler
 import configparser
+import os
 
 class TestConfig():
 	def __init__(self):
@@ -7,9 +7,16 @@ class TestConfig():
 		self.test_type = 'Korprov'
 		self.car_type = 'Automatbil'
 		self.test_lang = 'English'
-		self.loc = ['Farsta']
+		self.loc = []
 
-	def extract_args(self, args, config):
+	def extract_args(self, args, config_file):
+		config = configparser.ConfigParser()
+		if os.path.exists(config_file):
+			config.read(config_file)
+		else:
+			with open(config_file, 'w') as file:
+				file.write('[USER]\n[TEST]\n[LOCATIONS]') 
+
 		if args.pn:
 			self.pn = args.pn
 		else:
@@ -25,15 +32,25 @@ class TestConfig():
 			try:
 				self.test_type = config['TEST']['type']
 			except:
-				print('Using default value for test type: %'.format(self.test_type))
+				print('Using default value for test type: {}'.format(self.test_type))
 
-		if args.car:
-			self.bil_type = args.car
-		else:
-			try:
-				self.bil_type = config['TEST']['car']
-			except:
-				print('Using default value for car type: %'.format(self.car_type))
+		if self.test_type == 'Korprov':
+			if args.car:
+				self.bil_type = args.car
+			else:
+				try:
+					self.bil_type = config['TEST']['car']
+				except:
+					print('Using default value for car type: {}'.format(self.car_type))
+
+		if self.test_type == 'Kunskap':
+			if args.lang:
+				self.language = args.lang
+			else:
+				try:
+					self.language = config['TEST']['language']
+				except:
+					print('Using default value for language: {}'.format(self.language))
 
 		if args.loc:
 			self.loc = [args.loc]
@@ -42,12 +59,13 @@ class TestConfig():
 				try:
 					self.loc = config['LOCATIONS']['korprov_locs'].split('\n')
 				except:
-					print('Using default value for location: %'.format(self.loc))
+					print('Scanning all test locations.')
 			else:
 				try:
 					self.loc = config['LOCATIONS']['kunskap_locs'].split('\n')
+					print(self.loc)
 				except:
-					print('Using default value for location: %'.format(self.loc))
+					print('Scanning all test locations.')
 
 		return True
 
@@ -60,6 +78,8 @@ class TestConfig():
 			config['TEST']['type'] = args.test
 		if args.car:
 			config['TEST']['car'] = args.car
+		if args.lang:
+			config['TEST']['language'] = args.lang
 		if args.loc:
 			if config['TEST']['type'] == 'Korprov':
 				locs  = config['LOCATIONS']['korprov_locs'].split('\n')
