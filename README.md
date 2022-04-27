@@ -1,4 +1,24 @@
 # Bot for Trafikverket time booking site.
+
+## Prerequisites
+1. Python 3. Installation [guide](https://docs.python-guide.org/starting/installation/).
+2. Latest version of Google Chrome. Download [here](https://www.google.com/intl/en_us/chrome/).
+3. Corresponding version of Chrome Driver. Download from [here](https://chromedriver.chromium.org/downloads). Make sure the Chrome driver version matches the version of Google Chrome installed in your computer.
+
+## Installation
+1. CD to the location where you want to install.
+2. Download the repo to the local drive
+```
+git clone https://github.com/vaishakk/korprov
+```
+3. Install dependencies
+```
+pip3 install -r requirements.txt
+```
+4. Run the script
+```
+python run.py -p <personnummer>
+``` 
 ## Usage: 
 ```
 python run.py [-h] [--pn PN] [--test TEST] [--car CAR] [--loc LOC]
@@ -6,22 +26,33 @@ python run.py [-h] [--pn PN] [--test TEST] [--car CAR] [--loc LOC]
 ```
 ### Arguments:
 ```
-  -h, --help            show this help message and exit 
-  --pn PN, -p PN        The personnummer of the user. Format YYYYMMDD-XXXX 
-  --test TEST, -t TEST  Test type - Korprov or Kunskapsprov. Default: Korprov 
-  --car CAR, -c CAR     Car type - Automatbil or Manuellbil. Default: Automatbil 
-  --loc LOC, -l LOC     Location of test. Will be ignored if not a valid location. Default: Farsta
-  --add_config 
+  -h, --help            show this help message and exit
+  --pn PN, -p PN        The personnummer of the user.
+  --test TEST, -t TEST  Test type - Korprov or Kunskapsprov. Default: Korprov
+  --car CAR, -c CAR     Car type - Automatbil or Manuellbil. Default: Automatbil. 
+                        Only valid for Korprov.
+  --loc LOC, -l LOC     Location of test. 
+                        Will be ignored if not a valid location.
+  --lang LANG, -s LANG  Language of test. Default: Engelska. 
+                        Only valid for Kunskapsprov.
+  --add_config
   ```
   [Valid Korprov locations](https://github.com/vaishakk/korprov/blob/main/korprov-locs.txt) \
   [Valid Kunskapsprov locations](https://github.com/vaishakk/korprov/blob/main/kunskaps-locs.txt)
-### Runing with default values
-```
-python run.py -p <personnummer>
-```
+
 ## Configuration
 A permenant configuration can be added by calling the --add_config command
 ```
-python run.py --add_config -p <personnummer> -t Kunskapsprov -l Farsta
+python run.py --add_config -p <personnummer> -t Kunskapsprov -l Farsta -s Svenska
 ```
-Command line arguments overrides stored configuration.
+To add many locations to the configuration, run the following command mutiple times until you add all the required locations.
+```
+python run.py --add_config -l <location>
+```
+Once all the required locations are added to config, you can run
+```
+python run.py
+```
+to scan through all those locations.
+
+Note: Command line arguments overrides stored configuration.
