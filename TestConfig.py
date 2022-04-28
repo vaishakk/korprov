@@ -2,12 +2,33 @@ import configparser
 import os
 
 class TestConfig():
-	def __init__(self):
-		self.pn = ''
-		self.test_type = 'Korprov'
-		self.car_type = 'Automatbil'
-		self.language = 'Engelska'
-		self.loc = []
+	def __init__(self, config_file):
+		config = configparser.ConfigParser()
+		if os.path.exists(config_file):
+			config.read(config_file)
+		else:
+			with open(config_file, 'w') as file:
+				file.write('[USER]\n[TEST]\n[LOCATIONS]') 
+		try:
+			self.pn = config['USER']['pn']
+		except:
+			self.pn = ''
+		try:
+			self.test_type = config['TEST']['type']
+		except:
+			self.test_type = 'Korprov'
+		try:
+			self.bil_type = config['TEST']['car']
+		except:
+			self.car_type = 'Automatbil'
+		try:
+			self.language = config['TEST']['language']
+		except:
+			self.language = 'Engelska'
+		try:
+			self.loc = config['LOCATIONS']['korprov_locs'].split('\n')
+		except:
+			self.loc = []
 
 	def extract_args(self, args, config_file):
 		config = configparser.ConfigParser()
@@ -92,3 +113,12 @@ class TestConfig():
 
 		with open('config.config', 'w') as file:
 			config.write(file)
+
+	def show_config(self):
+		print('Personnummer: {}'.format(self.pn))
+		print('Test Type: {}'.format(self.test_type))
+		if self.test_type == 'Korprov':
+			print('Car Type: {}'.format(self.car_type))
+		else:
+			print('Test language: {}'.format(self.language))
+		print('Test locations: {}'.format(self.loc))

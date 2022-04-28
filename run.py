@@ -12,11 +12,14 @@ parser.add_argument('--car', '-c', help='Car type - Automatbil or Manuellbil. De
 parser.add_argument('--loc', '-l', help='Location of test. Will be ignored if not a valid location.')
 parser.add_argument('--lang', '-s', help='Language of test. Default: Engelska. Only valid for Kunskapsprov')
 parser.add_argument('--add_config', action='store_true', required=False)
+parser.add_argument('--show_config', action='store_true', required=False)
 args = parser.parse_args()
 
-test_config = TestConfig()
+test_config = TestConfig(CONFIG_FILE)
 if args.add_config:
 	test_config.save_config(args)
+elif args.show_config:
+	test_config.show_config()
 else:
 	status = test_config.extract_args(args, CONFIG_FILE)
 	if status:
