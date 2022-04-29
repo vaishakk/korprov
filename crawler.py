@@ -54,18 +54,7 @@ class Crawler(webdriver.Chrome):
 								  else (self.iter_locs_kunskapsprov, 'kunskaps-times.csv')
 
 	def navigate_no_login(self):
-		# Click 'Boka' button
-		buttons = self.find_elements(By.CLASS_NAME, 'col-sm-3')
-		buttons[0].click()
-		self.implicitly_wait(10)
-		# Select book without login
-		opts = self.find_elements(By.CLASS_NAME,'list-group-item')
-		opts[3].click()
-		self.implicitly_wait(10)
-		# Click 'Continue'
-		cont = self.find_elements(By.CLASS_NAME, 'col-sm-4.col-sm-offset-3.col-sm-push-2')
-		cont[0].click()
-		self.implicitly_wait(10)
+		self.get("https://fp.trafikverket.se/Boka/#/licence/")
 		# Input personnummer
 		ssn = self.find_element(By.ID, 'social-security-number-input')
 		ssn.send_keys(self.config.pn)

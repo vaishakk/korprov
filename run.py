@@ -21,7 +21,7 @@ if args.add_config:
 elif args.show_config:
 	test_config.show_config()
 else:
-	status = test_config.extract_args(args, CONFIG_FILE)
+	status = test_config.extract_args(args)
 	if status:
 		print(test_config.pn)
 		c = Crawler(test_config)

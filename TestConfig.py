@@ -25,68 +25,40 @@ class TestConfig():
 			self.language = config['TEST']['language']
 		except:
 			self.language = 'Engelska'
-		try:
-			self.loc = config['LOCATIONS']['korprov_locs'].split('\n')
-		except:
-			self.loc = []
-
-	def extract_args(self, args, config_file):
-		config = configparser.ConfigParser()
-		if os.path.exists(config_file):
-			config.read(config_file)
-		else:
-			with open(config_file, 'w') as file:
-				file.write('[USER]\n[TEST]\n[LOCATIONS]') 
-
-		if args.pn:
-			self.pn = args.pn
+		if self.test_type == 'Korprov':
+			try:
+				self.loc = config['LOCATIONS']['korprov_locs'].split('\n')
+			except:
+				self.loc = []
 		else:
 			try:
-				self.pn = config['USER']['pn']
+				self.loc = config['LOCATIONS']['kunskap_locs'].split('\n')
 			except:
-				print("Personnummer not set. Either pass it as an argument or set a default in the config file.")
-				return False
+				self.loc = []
+
+	def extract_args(self, args):
+		if args.pn:
+			self.pn = args.pn
+		elif self.pn == '':
+			print("Personnummer not set. Either pass it as an argument or set a default in the config file.")
+			return False
 
 		if args.test:
 			self.test_type = args.test
-		else:
-			try:
-				self.test_type = config['TEST']['type']
-			except:
-				print('Using default value for test type: {}'.format(self.test_type))
 
 		if self.test_type == 'Korprov':
 			if args.car:
 				self.bil_type = args.car
-			else:
-				try:
-					self.bil_type = config['TEST']['car']
-				except:
-					print('Using default value for car type: {}'.format(self.car_type))
 
 		if self.test_type == 'Kunskapsprov':
 			if args.lang:
 				self.language = args.lang
-			else:
-				try:
-					self.language = config['TEST']['language']
-				except:
-					print('Using default value for language: {}'.format(self.language))
 
 		if args.loc:
 			self.loc = [args.loc]
-		else:
-			if self.test_type == 'Korprov':
-				try:
-					self.loc = config['LOCATIONS']['korprov_locs'].split('\n')
-				except:
-					print('Scanning all test locations.')
-			else:
-				try:
-					self.loc = config['LOCATIONS']['kunskap_locs'].split('\n')
-					print(self.loc)
-				except:
-					print('Scanning all test locations.')
+		
+		if not self.loc:
+			print('Scanning all locations.')
 
 		return True
 
