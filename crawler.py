@@ -37,8 +37,6 @@ class Crawler(webdriver.Chrome):
 	def __init__(self, test_config):
 		service = Service('./chromedriver')
 		super().__init__(service=service)
-		self.get("https://fp.trafikverket.se/Boka/#/")
-		self.implicitly_wait(10)
 		self.config = test_config
 		if not len(self.config.loc):
 			if self.config.test_type == 'Korprov':
@@ -55,6 +53,7 @@ class Crawler(webdriver.Chrome):
 
 	def navigate_no_login(self):
 		self.get("https://fp.trafikverket.se/Boka/#/licence/")
+		self.implicitly_wait(10)
 		# Input personnummer
 		ssn = self.find_element(By.ID, 'social-security-number-input')
 		ssn.send_keys(self.config.pn)
@@ -70,6 +69,8 @@ class Crawler(webdriver.Chrome):
 		self.close()
 
 	def navigate_with_login(self):
+		self.get("https://fp.trafikverket.se/Boka/#/")
+		self.implicitly_wait(10)
 		# Click 'Mina prov' button
 		buttons = self.find_elements(By.CLASS_NAME, 'col-sm-3')
 		buttons[1].click()
