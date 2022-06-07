@@ -90,7 +90,7 @@ class TestConfig():
 		print('Personnummer: {}'.format(self.pn))
 		print('Test Type: {}'.format(self.test_type))
 		if self.test_type == 'Korprov':
-			print('Car Type: {}'.format(self.car_type))
+			print('Car Type: {}'.format(self.bil_type))
 		else:
 			print('Test language: {}'.format(self.language))
 		print('Test locations: {}'.format(self.loc))
