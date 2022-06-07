@@ -1,5 +1,5 @@
 # Bot for Trafikverket time booking site.
-
+Getting a Swedish driving license is hard enough, but the hardest part is trying to find a time for Kunskapsprov and Körprov. The Trafikverket booking site lists time slots available at each location. It is not possible to list available slots at different locations at once, requiring one to go through each location one after the other in order to find a suitable time slot. This bot automatically crawls through all the prefered test locations and lists the earliest available time-slot at each location, making the process of booking time a little easier for the user. This bot doesn't automatically books a time-slot, but only lists earlier available time-slots at given locations.
 ## Prerequisites
 1. Python 3. Installation [guide](https://docs.python-guide.org/starting/installation/).
 2. Latest version of Google Chrome. Download [here](https://www.google.com/intl/en_us/chrome/).
